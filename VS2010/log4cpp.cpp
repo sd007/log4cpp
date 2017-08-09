@@ -11,6 +11,8 @@ using namespace std;
 #define MAX_LOGSIZE 1024*1024
 #define LOGFILE_SIZE 50
 
+char Oeasylog::m_logBuf[MAX_LOG_RECORD_LEN] = {0};
+
 Oeasylog* Oeasylog::m_plog = NULL;
 
 //获取log指针
@@ -70,45 +72,65 @@ m_logfilename (std::string("log4cpp.log"))
 //设置优先级
 void Oeasylog::setPriority(Priority priority) {
 	switch (priority) {
-	case (ERROR):
+	case (ERROR_LOG):
 		m_category_ref.setPriority(log4cpp::Priority::ERROR);
 		break;
 
-	case (WARN):
+	case (WARN_LOG):
 		m_category_ref.setPriority(log4cpp::Priority::WARN);
 		break;
 
-	case (INFO):
+	case (INFO_LOG):
 		m_category_ref.setPriority(log4cpp::Priority::INFO);
 		break;
-
-	case (DEBUG):
-		m_category_ref.setPriority(log4cpp::Priority::DEBUG);
-		break;
-
 	default:
 		m_category_ref.setPriority(log4cpp::Priority::DEBUG);
 		break;    
 	}
 }
 
-void Oeasylog::Error(const char* msg) {
-	m_category_ref.error(msg);
-}
-
-void Oeasylog::Warn(const char* msg) {
-	m_category_ref.warn(msg);
-}
-
-void Oeasylog::Info(const char* msg) {
-	m_category_ref.info(msg);
-}
-
-void Oeasylog::Debug(const char* msg) {
-	m_category_ref.debug(msg);
-}
-
 void Oeasylog::setLogFilename( const std::string& fileName /*= "log4cpp.log"*/ )
 {
 	m_logfilename = fileName;
 }
+
+
+void Oeasylog::Error( const char* filename, const int lineNo, const char* pchFormat, ... )
+{
+	memset(m_logBuf, 0 , MAX_LOG_RECORD_LEN);
+	int strLen = 0;
+	// 日志信息
+	va_list list;
+	va_start(list, pchFormat);
+	strLen += vsprintf(m_logBuf + strLen, pchFormat, list);
+	va_end(list);
+	strLen += sprintf(m_logBuf + strLen, "  (%s:%d)", filename, lineNo);
+	m_category_ref.error(m_logBuf);
+}
+
+void Oeasylog::Info( const char* filename, const int lineNo, const char* pchFormat, ... )
+{
+	memset(m_logBuf, 0 , MAX_LOG_RECORD_LEN);
+	int strLen = 0;
+	// 日志信息
+	va_list list;
+	va_start(list, pchFormat);
+	strLen += vsprintf(m_logBuf + strLen, pchFormat, list);
+	va_end(list);
+	strLen += sprintf(m_logBuf + strLen, "  (%s:%d)", filename, lineNo);
+	m_category_ref.info(m_logBuf);
+}
+
+void Oeasylog::Warn( const char* filename, const int lineNo, const char* pchFormat, ... )
+{
+	memset(m_logBuf, 0 , MAX_LOG_RECORD_LEN);
+	int strLen = 0;
+	// 日志信息
+	va_list list;
+	va_start(list, pchFormat);
+	strLen += vsprintf(m_logBuf + strLen, pchFormat, list);
+	va_end(list);
+	strLen += sprintf(m_logBuf + strLen, "  (%s:%d)", filename, lineNo);
+	m_category_ref.warn(m_logBuf);
+}
+

@@ -3,7 +3,7 @@ using namespace std;
 #include "log4cpp.h"
 int main()
 {
-	LogError("error allen");
-	LogWarn("warn allen");
+	OEASYLOG_E("error allen");
+	OEASYLOG_E("warn allen");
 	return 0;
 }

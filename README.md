@@ -1,2 +1,2 @@
-#log4cpp_use
-log4cpp 使用
+#log4cpp
+log4cpp class is common interface, generate from open souce log4cpp(http://log4cpp.sourceforge.net/)
